@@ -3,15 +3,19 @@ import { Link, useParams } from "react-router-dom";
 import ReactPlayer from "react-player";
 import { Typography, Box, Stack } from "@mui/material";
 import { CheckCircle } from "@mui/icons-material";
-import { Video } from "./";
+import { Videos } from "./";
 import { fetchFromAPI } from "../utils/fetchFromAPI";
 
 const VideoDetail = () => {
   const { id } = useParams();
   const [videoDetail, setVideoDetail] = useState(null);
+  const [videos, setVideos] = useState(null);
   useEffect(() => {
     fetchFromAPI(`videos?part=snippet,statistics&id=${id}`).then((data) =>
       setVideoDetail(data.items[0])
+    );
+    fetchFromAPI(`search?part=snippet&relatedToVideoId=${id}&type=video`).then(
+      (data) => setVideos(data.items)
     );
   }, [id]);
   if (!videoDetail?.snippet) return "Loading.....";
@@ -61,6 +65,14 @@ const VideoDetail = () => {
               </Stack>
             </Stack>
           </Box>
+        </Box>
+        <Box
+          px={2}
+          py={{ md: 1, sx: 5 }}
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Videos vidoes={videos} direction="column" />
         </Box>
       </Stack>
     </Box>
